@@ -1,0 +1,48 @@
+# --- Home Assistant ---
+secrets.yaml
+*.db
+*.db-shm
+*.db-wal
+home-assistant.log
+home-assistant_v2.db
+home-assistant_v2.db-shm
+home-assistant_v2.db-wal
+.storage/
+tts/
+cloud/
+deps/
+
+# Backups & Snapshots
+backup/
+*.tar
+*.zip
+
+# Temporary / Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.tmp
+temp/
+tmp/
+
+# --- ESPHome ---
+esphome/secrets.yaml
+esphome/*/secrets.yaml
+esphome/.esphome
+esphome/build/
+esphome/*.log
+*.bin
+
+# Firmware artifacts
+*.bin
+*.uf2
+
+# --- VS Code ---
+.vscode/
+.settings/
+
+# OS noise
+.DS_Store
+Thumbs.db

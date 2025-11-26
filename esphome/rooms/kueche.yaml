@@ -1,0 +1,146 @@
+esphome:
+  name: kuche
+  friendly_name: Küche
+  comment: Küche Sensoren & Aktoren
+  project: 
+    name: "Dominic Hahn.kueche"
+    version: "1.1.0"
+#######################################
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+#######################################
+logger:
+#######################################
+api:
+  encryption:
+    key: "yHB7fsvDgKNVUvcO07dCSTx1Su07S2iAVE/a+m7czpE="
+#######################################
+ota:
+  - platform: esphome
+    password: "e38b65bc54b5347ef4e292c7f223b81a"
+#######################################
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+#  manual_ip: 
+#    gateway: 192.168.1.1
+#    static_ip: 192.168.1.140
+#    dns1: 192.168.1.4
+#    subnet: 255.255.255.0
+#######################################
+web_server:
+  version: 3
+  port: 80
+#######################################
+output:
+  - platform: gpio
+    pin: GPIO19
+    id: white
+    inverted: true
+#######################################
+light:
+  - platform: binary
+    output: white
+    name: Warm White
+    icon: "mdi:led-strip-variant"
+
+  - platform: esp32_rmt_led_strip
+    rgb_order: RGB
+    pin: GPIO4
+    id: rgb_leds
+    num_leds: 12
+    chipset: ws2811
+    name: "Ambiente"
+    effects:
+      - random:
+          name: "Random Mood"
+          transition_length: 1s
+          update_interval: 2s
+      - flicker:
+          name: "Candle Flicker"
+          alpha: 95%
+          intensity: 3.5%
+      - addressable_rainbow:
+          name: "Rainbow Flow"
+          speed: 8
+          width: 80
+      - addressable_twinkle:
+          name: "Galaxy Twinkle"
+          twinkle_probability: 10%
+          progress_interval: 6ms
+      - addressable_color_wipe:
+          name: "Alarm Rot"
+          colors:
+            - red: 100%
+              green: 0%
+              blue: 0%
+              num_leds: 12
+            - red: 0%
+              green: 0%
+              blue: 0%
+              num_leds: 12
+          add_led_interval: 50ms
+          reverse: true
+      - addressable_color_wipe:
+          name: "Alarm Grün"
+          colors:
+            - red: 0%
+              green: 100%
+              blue: 0%
+              num_leds: 12
+            - red: 0%
+              green: 0%
+              blue: 0%
+              num_leds: 12
+          add_led_interval: 50ms
+          reverse: true
+      - addressable_color_wipe:
+          name: "Alarm Blau"
+          colors:
+            - red: 0%
+              green: 0%
+              blue: 100%
+              num_leds: 12
+            - red: 0%
+              green: 0%
+              blue: 0%
+              num_leds: 12
+          add_led_interval: 50ms
+          reverse: true
+#######################################
+i2c:
+  sda: 21
+  scl: 22
+  scan: true
+#######################################
+sensor:
+  - platform: bme280_i2c
+    temperature:
+      name: "Temperatur"
+      oversampling: 4x
+    humidity:
+      name: "Luftfeuchtigkeit"
+    address: 0x76
+    update_interval: 10s
+#-----------------------------------#
+  - platform: wifi_signal
+    name: "WiFi Signalstärke"
+    update_interval: 10s
+
+  - platform: template
+    name: "RGB Verbrauch"
+    id: led_power
+    unit_of_measurement: "W"
+    device_class: power
+    state_class: measurement
+    update_interval: 1s
+    lambda: |-
+      if (id(rgb_leds).current_values.is_on()) {
+        float brightness = id(rgb_leds).current_values.get_brightness();  // 0.0 - 1.0
+        return brightness * 12.0;  // 12 W @ 100%
+      } else {
+        return 0.0;
+      }
+#######################################

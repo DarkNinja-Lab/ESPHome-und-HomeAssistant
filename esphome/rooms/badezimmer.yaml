@@ -1,0 +1,97 @@
+esphome:
+  name: badezimmer
+  friendly_name: Badezimmer Steuerung
+  comment: Badezimmer Steuer & Sensor eingeit
+  project: 
+    name: "Dominic Hahn.badezimmer"
+    version: "3.1.0"
+###############################
+esp8266:
+  board: esp01_1m
+##########################
+logger:
+##############################
+api:
+  encryption:
+    key: "EwTfZVVGQHDshMJyc89MYKnnsvXd21dCBKG7Ov5yt1c="
+##############################
+ota:
+  - platform: esphome
+    password: "45bb47aff01bedc1a61cb18bd53fed0e"
+####################################
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true
+  manual_ip:
+    static_ip: 192.168.1.186
+    gateway: 192.168.1.1
+    subnet: 255.255.255.0
+    dns1: 192.168.1.4
+#############################
+i2c:
+  sda: GPIO4
+  scl: GPIO5
+  scan: true
+#############################
+web_server:
+  port: 80
+  version: 3
+#############################
+sensor:
+  - platform: bme280_i2c
+    temperature:
+      name: "Raumtemperatur"
+      oversampling: 4x
+    humidity:
+      name: "Luftfeuchtigkeit"
+    address: 0x76
+    update_interval: 10s
+
+  
+  - platform: wifi_signal
+    name: "WiFi Signal dB"
+    internal: True
+    id: wifi_signal_db
+    update_interval: 10s
+
+  
+  - platform: copy
+    source_id: wifi_signal_db
+    name: "WiFi Signal"
+    filters:
+      - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+    unit_of_measurement: "%"
+    entity_category: "diagnostic"
+    device_class: ""
+#############################
+light:
+  - platform: binary
+    name: "Ambiente"
+    output: badled_relay
+    icon: "mdi:led-strip-variant"
+#############################
+output:
+  - platform: gpio
+    pin: GPIO12
+    id: badled_relay
+    inverted: True
+#############################
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: 13
+      inverted: True
+      mode: 
+        input: True
+        pullup: True
+    name: "Light Mode 1"
+    
+  - platform: gpio
+    pin:
+      number: 14
+      inverted: True
+      mode: 
+        input: True
+        pullup: True
+    name: "Light Mode 2"

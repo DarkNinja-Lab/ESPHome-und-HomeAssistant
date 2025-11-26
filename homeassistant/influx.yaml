@@ -1,0 +1,11 @@
+
+    host: xxx.xxx.xxx.xxx
+    port: 8086
+    database: homeassistant
+    username: haos
+    password: xxxxxxxxxxxx
+    max_retries: 3
+    default_measurement: state
+    include:
+       domains:
+        - sensor
