@@ -17,196 +17,26 @@
   - action: light.turn_on
     metadata: {}
     data:
-      brightness_pct: 100
+      brightness_pct: 85
       rgb_color:
       - 255
       - 128
       - 0
     target:
       entity_id: light.bedside_lamp_bett
-  - action: light.turn_on
+    alias: Bett Anschalten
+  - alias: Bett Anschalten
+    action: light.turn_on
     metadata: {}
     data:
-      brightness_pct: 100
+      brightness_pct: 25
       rgb_color:
-      - 0
+      - 255
       - 128
-      - 192
-    target:
-      entity_id: light.bedside_lamp_herz
-  - delay:
-      hours: 0
-      minutes: 10
-      seconds: 0
-      milliseconds: 0
-  - action: light.turn_off
-    metadata: {}
-    data: {}
+      - 0
     target:
       entity_id:
-      - light.bedside_lamp_bett
-      - light.bedside_lamp_herz
-  mode: single
-- id: '1760740003639'
-  alias: ai test
-  description: ''
-  use_blueprint:
-    path: valentinfrlch/event_summary.yaml
-    input:
-      run_conditions:
-      - condition: device
-        device_id: 87ecc64f229de7cc5ae73e2f554e426a
-        domain: device_tracker
-        entity_id: c1d86f5de53d6d2f31baff2d08199fab
-        type: is_not_home
-      camera_entities:
-      - camera.walderdorffstrasse_26_eingang_eingang
-      - camera.walderdorffstrasse_26_wohnzimmer_wohnzimmer
-      provider: 01K7T45513SJ7ARRXJVBFEAZ82
-      model: gemini-2.0-flash
-      notify_device:
-      - 87ecc64f229de7cc5ae73e2f554e426a
-      - 651047a56ebcbce2e482e4ed72e0f163
-      notification_time: at {{ now().strftime("%H:%M") }}
-      tap_navigate: /lovelace/cctv
-      motion_sensors:
-      - binary_sensor.flur_hausture
-      - binary_sensor.wohnzimmer_balkon
-      max_frames: 20
-      file_path: /config/www/snapshots/{{ camera_file_path }}/last_motion.jpg
-      notification_critical: true
-      max_tokens: 20
-      trigger_state: Zeichnet auf
-      duration: 20
-      notification_delivery: Consolidated
-      cooldown:
-        hours: 0
-        minutes: 0
-        seconds: 3
-      use_memory: false
-      message: 'Fass die Ereignisse zusammen, basierend auf einer Serie von Bildern,
-        die in kurzen Abständen aufgenommen wurden. Konzentrier dich nur auf alles,
-        was sich bewegt – Menschen, Fahrzeuge, Tiere, fliegende Kaffeebecher – eben
-        Action. Ignorier den ganzen unbewegten Kram wie Wände, Bäume oder Deko. Gib
-        eine klare, knackige Zusammenfassung, was da abgeht. Und wenn nix passiert,
-        sag einfach trocken: „Nix bedrohliches Gesehen.“'
-- id: '1760832449695'
-  alias: Neue Automation
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.wohnzimmer_balkon
-    from: 'off'
-    to: 'on'
-  conditions:
-  - condition: time
-    after: '19:00:00'
-    before: '23:20:00'
-  actions:
-  - action: light.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.balkon_lichterkette
-  - delay:
-      hours: 0
-      minutes: 5
-      seconds: 0
-      milliseconds: 0
-  - action: light.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.balkon_lichterkette
-  mode: single
-- id: '1762098036213'
-  alias: Ambiente Sonnenuntergang
-  description: ''
-  triggers:
-  - trigger: sun
-    event: sunset
-    offset: 0
-  conditions: []
-  actions:
-  - alias: Wohnzimmer LED
-    if:
-    - condition: state
-      entity_id: light.wohnzimmer_ambiente
-      state: 'off'
-    then:
-    - action: light.turn_on
-      metadata: {}
-      data:
-        brightness_pct: 100
-        rgb_color:
-        - 128
-        - 0
-        - 255
-      target:
-        entity_id: light.wohnzimmer_ambiente
-  - alias: Küche LED
-    if:
-    - condition: state
-      entity_id: light.kuche_ambiente
-      state: 'off'
-    then:
-    - action: light.turn_on
-      metadata: {}
-      data:
-        brightness_pct: 100
-        rgb_color:
-        - 255
-        - 128
-        - 0
-      target:
-        entity_id: light.kuche_ambiente
-  - alias: Schlafzimmer Bett
-    if:
-    - condition: state
-      entity_id: light.bedside_lamp_bett
-      state: 'off'
-    then:
-    - action: light.turn_on
-      metadata: {}
-      data:
-        rgb_color:
-        - 0
-        - 0
-        - 255
-        brightness_pct: 100
-      target:
-        entity_id: light.bedside_lamp_bett
-  - alias: Flur LED
-    if:
-    - condition: state
-      entity_id: light.flur_ambiente
-      state: 'off'
-    then:
-    - action: light.turn_on
-      metadata: {}
-      data:
-        brightness_pct: 60
-        rgb_color:
-        - 255
-        - 255
-        - 0
-      target:
-        entity_id: light.flur_ambiente
-  mode: single
-- id: '1762098328024'
-  alias: Alle Lichter ausschalten um 01:00 Nachts
-  description: ''
-  triggers:
-  - trigger: time
-    at: 01:00:00
-  conditions: []
-  actions:
-  - action: script.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.alle_lichter_ausschalten
+      - light.esp_flur_led_stripe
   mode: single
 - id: '1762379468636'
   alias: Schlafmodus Aktiviren Schalter Bett
@@ -214,20 +44,105 @@
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.schlafzimmer_sleep_mode
+    - binary_sensor.esp_schlafzimmer_bed_switch
     from:
+    - 'off'
     to:
+    - 'on'
   conditions: []
   actions:
-  - action: script.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.sleep
+  - if:
+    - condition: state
+      entity_id: binary_sensor.wohnzimmer_balkon
+      state:
+      - 'on'
+    - condition: state
+      entity_id: binary_sensor.flur_hausture
+      state: 'on'
+    then:
+    - action: notify.mobile_app_iphone_13
+      metadata: {}
+      data:
+        message: Balkon oder Eingang ist offen
+    - action: light.turn_on
+      metadata: {}
+      data:
+        effect: Alarm Blau
+        brightness_pct: 100
+      target:
+        entity_id: light.bedside_lamp_bett
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 900
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.bedside_lamp_bett
+    else:
+    - action: alarm_control_panel.alarm_arm_night
+      metadata: {}
+      data: {}
+      target:
+        entity_id: alarm_control_panel.alarmo
+    - action: automation.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - automation.wohnzimmer_frei
+        - automation.wohnzimmer_prasenz
+      data: {}
+    - action: automation.turn_off
+      metadata: {}
+      target:
+        entity_id:
+        - automation.schlafzimmer_prasenz
+      data:
+        stop_actions: true
+    - action: script.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: script.alle_lichter_ausschalten
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.ok
+    - action: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id:
+        - switch.r2d2_do_not_disturb_switch
+    - data:
+        addon: core_rpc_shutdown
+        input: Gaming-PC
+      action: hassio.addon_stdin
+      alias: Gaming-PC Herunterfahren
+    - action: light.turn_on
+      metadata: {}
+      data:
+        effect: Alarm Grün
+        brightness_pct: 100
+      target:
+        entity_id: light.bedside_lamp_bett
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 0
+        milliseconds: 900
+    - action: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.bedside_lamp_bett
   mode: single
 - id: '1762546553500'
   alias: Verlassen der Wohnung
-  description: 'iphone 13 Triggert mit GPS '
+  description: iPhone 13 triggert mit GPS
   triggers:
   - device_id: 87ecc64f229de7cc5ae73e2f554e426a
     domain: device_tracker
@@ -237,31 +152,38 @@
     zone: zone.home
   conditions: []
   actions:
-  - action: notify.mobile_app_iphone_13
-    metadata: {}
-    data:
-      message: "Hab alles sicher gemacht\U0001F60A"
-      title: HomeAssistant
-  - action: script.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.alle_lichter_ausschalten
-  - action: alarm_control_panel.alarm_arm_away
-    metadata: {}
-    data: {}
-    target:
+  - target:
       entity_id: alarm_control_panel.alarmo
-  - action: switch.turn_off
-    metadata: {}
+    action: alarm_control_panel.alarm_arm_away
     data: {}
-    target:
+  - target:
       entity_id: switch.ok
-  - action: script.turn_on
-    metadata: {}
+    action: switch.turn_off
     data: {}
+  - target:
+      entity_id: script.alle_lichter_ausschalten
+    action: script.turn_on
+    data: {}
+    alias: Alle Lichter Ausschalten
+  - target:
+      entity_id:
+      - camera.walderdorffstrasse_26_eingang_eingang
+      - camera.walderdorffstrasse_26_wohnzimmer_wohnzimmer
+    action: agent_dvr.start_recording
+    data: {}
+    alias: Alle Kameras Aufnahme Starten
+  - data:
+      addon: core_rpc_shutdown
+      input: Gaming-PC
+    action: hassio.addon_stdin
+    alias: Gaming-PC Herunterfahren
+  - action: automation.turn_off
+    metadata: {}
     target:
-      entity_id: script.start_record
+      entity_id:
+      - automation.flur_prasenz
+    data:
+      stop_actions: true
   mode: single
 - id: '1762616186307'
   alias: Zuhause ankommen
@@ -275,149 +197,785 @@
     zone: zone.home
   conditions: []
   actions:
-  - action: script.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.stop_record
-  - action: notify.mobile_app_iphone_13
-    metadata: {}
-    data:
-      message: "Du bist ja wieder daheim \U0001F60A"
-      title: HomeAssistant
   - action: alarm_control_panel.alarm_disarm
     metadata: {}
     data: {}
     target:
       entity_id: alarm_control_panel.alarmo
-  - action: light.turn_on
+  - action: agent_dvr.stop_recording
     metadata: {}
-    data: {}
     target:
       entity_id:
-      - light.flur_warm_white
-      - light.kuche_warm_white
+      - camera.walderdorffstrasse_26_eingang_eingang
+      - camera.walderdorffstrasse_26_wohnzimmer_wohnzimmer
+    data: {}
+  - action: automation.turn_on
+    metadata: {}
+    target:
+      entity_id:
+      - automation.flur_prasenz
+    data: {}
   mode: single
 - id: '1762876757510'
-  alias: Wall Switch
+  alias: Wall Switch flur
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.flur_schalter
+    - binary_sensor.esp_flur_wand_schalter
     to:
     from:
   conditions: []
   actions:
-  - if:
-    - condition: state
-      entity_id: light.flur_warm_white
-      state: 'off'
-    then:
-    - action: light.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - light.flur_warm_white
-        - light.kuche_warm_white
-    else:
-    - action: script.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: script.alle_lichter_ausschalten
-    enabled: false
   - action: light.toggle
     metadata: {}
     data: {}
     target:
-      entity_id: light.flur_warm_white
+      entity_id:
+      - light.esp_flur_deckenlampe
   mode: single
-- id: '1763133852788'
-  alias: Player Join Minecraft Server
-  description: LED Wohnzimmer leuchten wie Grassblock für 3 Sekunden
-  triggers:
-  - trigger: numeric_state
-    entity_id: sensor.192_168_1_83_25565_spieler_online
-    above: 0
-  actions:
-  - data:
-      scene_id: wohnzimmer_pre_minecraft
-      snapshot_entities:
-      - light.wohnzimmer_ambiente
-    action: scene.create
-  - target:
-      entity_id: light.wohnzimmer_ambiente
-    data:
-      effect: Minecraft
-    action: light.turn_on
-  - delay: 00:00:03
-  - target:
-      entity_id: scene.wohnzimmer_pre_minecraft
-    action: scene.turn_on
-  - data:
-      entity_id: scene.wohnzimmer_pre_minecraft
-    action: scene.delete
-  mode: single
-- id: '1763856392448'
-  alias: Neue Automation
+- id: '1765047958819'
+  alias: Tag Beginn
   description: ''
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.badezimmer_light_mode_1
-    from: 'off'
-    to: 'on'
-  conditions: []
+    - binary_sensor.esp_schlafzimmer_bed_switch
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions:
+  - condition: device
+    device_id: 87ecc64f229de7cc5ae73e2f554e426a
+    domain: device_tracker
+    entity_id: c1d86f5de53d6d2f31baff2d08199fab
+    type: is_home
   actions:
-  - action: light.turn_on
+  - alias: Presenz Sensoren Anschalten Wohnzimmer/ Schlafzimmer
+    action: automation.turn_on
+    metadata: {}
+    target:
+      entity_id:
+      - automation.wohnzimmer_prasenz
+      - automation.schlafzimmer_prasenz
+    data: {}
+  - action: alarm_control_panel.alarm_disarm
     metadata: {}
     data: {}
     target:
-      entity_id: light.badezimmer_ambiente
-  - action: light.turn_on
-    metadata: {}
-    target:
-      entity_id: light.tz3000_kohbva1f_ts0505b
-    data:
-      color_temp_kelvin: 2947
-      brightness_step_pct: 100
-  mode: single
-- id: '1763856422953'
-  alias: Neue Automation
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.badezimmer_light_mode_2
-    from: 'off'
-    to: 'on'
-  conditions: []
-  actions:
-  - action: light.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.badezimmer_ambiente
-  mode: single
-- id: '1763856464390'
-  alias: Neue Automation
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - binary_sensor.badezimmer_light_mode_1
-    - binary_sensor.badezimmer_light_mode_2
-    from: 'on'
-    to: 'off'
-  conditions: []
-  actions:
-  - action: light.turn_off
+      entity_id: alarm_control_panel.alarmo
+  - action: switch.turn_off
     metadata: {}
     data: {}
     target:
       entity_id:
-      - light.badezimmer_ambiente
+      - switch.r2d2_do_not_disturb_switch
+      - switch.firetv_do_not_disturb_switch
+    alias: Alexa DND Ausschalten
+  - alias: Guten Morgen Wünschen
+    if:
+    - condition: time
+      after: 06:00:00
+      before: '10:00:00'
+    then:
+    - action: notify.mobile_app_iphone_13
+      metadata: {}
+      data:
+        title: Guten Morgen ☀️
+        message: "Neuer Tag Neues Glück \U0001F4C5"
+  - action: automation.turn_off
+    metadata: {}
+    target:
+      entity_id: automation.wecker_07_00
+    data:
+      stop_actions: true
+  - action: climate.turn_on
+    metadata: {}
+    target:
+      entity_id: climate.heizung
+    data: {}
+  mode: single
+- id: '1765284541684'
+  alias: Reminder 20 Uhr
+  triggers:
+  - at: '20:00:00'
+    trigger: time
+  conditions: []
+  actions:
+  - if:
+    - condition: device
+      device_id: 87ecc64f229de7cc5ae73e2f554e426a
+      domain: device_tracker
+      entity_id: c1d86f5de53d6d2f31baff2d08199fab
+      type: is_home
+    then:
+    - data:
+        title: "\U0001F4A7Wasserzähler\U0001F4A7"
+        data:
+          actions:
+          - action: URI
+            title: Jetzt Erledigen
+            uri: /lovelace/bad
+            icon: https://img.icons8.com/?size=100&id=oa5IcR9PtXfT&format=png&color=000000
+          - action: SNOOZE
+            title: Für 15 Min Warten
+        message: Bitte den Wasserstand Notieren.
+      action: notify.mobile_app_iphone_13
+    - wait_for_trigger:
+      - device_id: 87ecc64f229de7cc5ae73e2f554e426a
+        domain: device_tracker
+        entity_id: c1d86f5de53d6d2f31baff2d08199fab
+        type: enters
+        trigger: device
+        zone: zone.home
+        id: test
+    else:
+    - if:
+      - condition: device
+        device_id: 87ecc64f229de7cc5ae73e2f554e426a
+        domain: device_tracker
+        entity_id: c1d86f5de53d6d2f31baff2d08199fab
+        type: is_home
+      - condition: trigger
+        id: test
+      then:
+      - data:
+          title: "\U0001F4A7Wasserzähler\U0001F4A7"
+          data:
+            actions:
+            - action: URI
+              title: Jetzt Erledigen
+              uri: /lovelace/bad
+              icon: https://img.icons8.com/?size=100&id=oa5IcR9PtXfT&format=png&color=000000
+            - action: SNOOZE
+              title: Für 15 Min Warten
+          message: Bitte den Wasserstand Notieren.
+        action: notify.mobile_app_iphone_13
+  mode: single
+- id: '1766188007871'
+  alias: E-Bike Akku Voll
+  description: ''
+  use_blueprint:
+    path: sbyx/notify-or-do-something-when-an-appliance-like-a-dishwasher-or-washing-machine-finishes.yaml
+    input:
+      power_sensor: sensor.mini1pm_e_bike_leistung
+      finishing_threshold: 8
+      starting_threshold: 15
+      pre_actions:
+      - action: notify.mobile_app_iphone_13
+        metadata: {}
+        data:
+          message: Akku wird geladen.
+          title: "\U0001F6B2Winora E-Bike"
+      actions:
+      - action: notify.mobile_app_iphone_13
+        metadata: {}
+        data:
+          title: "\U0001F6B2Winora E-Bike"
+          message: Zuletzt geladener Akku ist Voll
+      - action: notify.alexa_media_r2d2
+        metadata: {}
+        data:
+          message: Zuletzt geladener Akku ist Voll
+      finishing_hysteresis: 1
+      starting_hysteresis: 1
+- id: '1766877026310'
+  alias: 3D Drucker Fertig
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.octoprint_printing
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions: []
+  actions:
+  - action: notify.alexa_media_r2d2
+    metadata: {}
+    data:
+      message: 3D-Drucker sollte fertig sein, bitte prüfen.
+  mode: single
+- id: '1767488560461'
+  alias: Flur Präsenz
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sonoff_snzb_06p
+    from:
+    - 'off'
+    to:
+    - 'on'
+  conditions:
+  - condition: device
+    device_id: 87ecc64f229de7cc5ae73e2f554e426a
+    domain: device_tracker
+    entity_id: c1d86f5de53d6d2f31baff2d08199fab
+    type: is_home
+  actions:
+  - if:
+    - condition: time
+      after: '12:30:00'
+      before: '23:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
+    then:
+    - alias: Flur Licht
+      action: light.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - light.esp_flur_deckenlampe
+      data: {}
+    else:
+    - alias: Flur LED
+      action: light.turn_on
+      metadata: {}
+      target:
+        entity_id: light.esp_flur_led_stripe
+      data:
+        rgb_color:
+        - 255
+        - 128
+        - 0
+        brightness_pct: 60
+  mode: single
+- id: '1767488659701'
+  alias: Badezimmer Präsenz
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sonoff_snzb_06p_2
+    from:
+    - 'off'
+    to:
+    - 'on'
+  conditions:
+  - condition: device
+    device_id: 87ecc64f229de7cc5ae73e2f554e426a
+    domain: device_tracker
+    entity_id: c1d86f5de53d6d2f31baff2d08199fab
+    type: is_home
+  actions:
+  - if:
+    - condition: time
+      after: '12:30:00'
+      before: '23:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
+    then:
+    - alias: Bad Licht
+      action: light.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - light.tz3000_kohbva1f_ts0505b
+      data:
+        brightness_pct: 100
+        color_temp_kelvin: 4475
+    else:
+    - alias: Flur LED
+      action: light.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - light.tz3000_kohbva1f_ts0505b
+      data:
+        brightness_pct: 25
+        color_temp_kelvin: 2000
+  mode: single
+- id: '1767488731266'
+  alias: Badezimmer Frei
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sonoff_snzb_06p_2
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions: []
+  actions:
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - light.esp_badezimmer_spiegel_licht
       - light.tz3000_kohbva1f_ts0505b
+    data: {}
+    alias: Badezimmer alle Lichter aus
+  mode: single
+- id: '1767488801325'
+  alias: Flur Frei
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sonoff_snzb_06p
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions: []
+  actions:
+  - alias: Flur alle Lichter aus
+    action: light.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - light.esp_flur_led_stripe
+      - light.esp_flur_deckenlampe
+    data: {}
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.shellyem3_c8c9a33d4619
+    data: {}
+    alias: Shelly Relay Schaltschrank ausschalten
+  mode: single
+- id: '1767488999637'
+  alias: Schlafzimmer Frei
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sonoff_snzb_06p_3
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions: []
+  actions:
+  - alias: Schlafzimmer alle Lichter aus
+    action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.ender_3_licht
+      - light.esp_schlafzimmer_nachttisch
+      - light.signify_netherlands_b_v_lwa001
+      - light.bedside_lamp_bett
+  mode: single
+- id: '1767489185949'
+  alias: Schlafzimmer Präsenz
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.sonoff_snzb_06p_3
+    from:
+    - 'off'
+    to:
+    - 'on'
+  conditions:
+  - condition: device
+    device_id: 87ecc64f229de7cc5ae73e2f554e426a
+    domain: device_tracker
+    entity_id: c1d86f5de53d6d2f31baff2d08199fab
+    type: is_home
+  actions:
+  - if:
+    - condition: time
+      after: '10:30:00'
+      before: '23:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
+    then:
+    - alias: Schlafzimmer Licht
+      action: light.turn_on
+      metadata: {}
+      data:
+        brightness_pct: 100
+      target:
+        entity_id: light.signify_netherlands_b_v_lwa001
+    else:
+    - alias: Schlafzimmer LED
+      action: light.turn_on
+      metadata: {}
+      data:
+        rgb_color:
+        - 255
+        - 128
+        - 0
+        brightness_pct: 60
+      target:
+        entity_id: light.bedside_lamp_bett
+  - if:
+    - condition: state
+      entity_id: binary_sensor.octoprint_printing
+      state:
+      - 'on'
+    then:
+    - action: light.turn_on
+      metadata: {}
+      target:
+        entity_id: light.ender_3_licht
+      data: {}
+    alias: 3D Drucker Licht
+  mode: single
+- id: '1767489470896'
+  alias: Wohnzimmer Präsenz
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.wifi_human_presence_sensor_belegung
+    from:
+    - 'off'
+    to:
+    - 'on'
+  conditions:
+  - condition: device
+    device_id: 87ecc64f229de7cc5ae73e2f554e426a
+    domain: device_tracker
+    entity_id: c1d86f5de53d6d2f31baff2d08199fab
+    type: is_home
+  actions:
+  - if:
+    - condition: time
+      after: '16:30:00'
+      before: '20:00:00'
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
+    then:
+    - alias: Wohnzimmer Licht
+      action: light.turn_on
+      metadata: {}
+      data:
+        rgb_color:
+        - 255
+        - 128
+        - 0
+        brightness_pct: 70
+      target:
+        entity_id:
+        - light.esp_wohnzimmer_led_stripe
+        - light.kuche_ambiente
+    else:
+    - if:
+      - condition: time
+        after: '20:00:00'
+        before: '23:00:00'
+        weekday:
+        - mon
+        - tue
+        - wed
+        - thu
+        - fri
+        - sat
+        - sun
+      then:
+      - alias: Wohnzimmer Licht
+        action: light.turn_on
+        metadata: {}
+        data:
+          rgb_color:
+          - 255
+          - 128
+          - 0
+          brightness_pct: 40
+        target:
+          entity_id:
+          - light.esp_wohnzimmer_led_stripe
+          - light.kuche_ambiente
+  - if:
+    - condition: time
+      after: '23:00:00'
+      before: 05:00:00
+      weekday:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      - sat
+      - sun
+    then:
+    - action: light.turn_on
+      metadata: {}
+      target:
+        entity_id: light.controller_rgb_4129af
+      data:
+        rgb_color:
+        - 255
+        - 128
+        - 0
+        brightness_pct: 100
+  mode: single
+- id: '1767489701358'
+  alias: Wohnzimmer Frei
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.wifi_human_presence_sensor_belegung
+    from:
+    - 'on'
+    to:
+    - 'off'
+  conditions: []
+  actions:
+  - alias: Flur alle Lichter aus
+    action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - light.kuche_warm_white
+      - light.kuche_ambiente
+      - light.wohnzimmer_warm_white
+      - light.esp_wohnzimmer_led_stripe
+  mode: single
+- id: '1767489898764'
+  alias: E-Bike Ladegerät Auto Aus
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.mini1pm_e_bike_leistung
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
+    below: 7
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.mini1pm_e_bike
+    data: {}
+  mode: single
+- id: '1767490004652'
+  alias: Gaming-PC Steckdose Auto Aus
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.shelly1pmminig3_e4b063f720bc_leistung
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    below: 10
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - switch.shelly1pmminig3_e4b063f720bc
+    data: {}
+  mode: single
+- id: '1767797534277'
+  alias: Neue Automation
+  description: ''
+  triggers:
+  - trigger: tag
+    tag_id: 8ee9fc0c-813f-463f-9de6-db058b2d5eee
+  conditions: []
+  actions:
+  - action: notify.alexa_media_r2d2
+    metadata: {}
+    data:
+      message: test
+  mode: single
+- id: '1767798093206'
+  alias: Kochen
+  description: ''
+  triggers:
+  - trigger: tag
+    tag_id: fcb3951a-7728-41a7-b995-dcb0c7d9f70b
+  conditions: []
+  actions:
+  - action: light.toggle
+    metadata: {}
+    target:
+      entity_id:
+      - light.kuche_warm_white
+      - light.wohnzimmer_warm_white
+    data: {}
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - light.kuche_ambiente
+      - light.esp_wohnzimmer_led_stripe
+      - light.controller_rgb_4129af
+    data: {}
+  mode: single
+- id: '1767798519852'
+  alias: Watch TV
+  description: ''
+  triggers:
+  - trigger: tag
+    tag_id: b6ec87fd-f347-443d-a9b4-ecb3f4bf38b3
+  conditions: []
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    target:
+      entity_id:
+      - light.kuche_ambiente
+      - light.esp_wohnzimmer_led_stripe
+      - light.controller_rgb_4129af
+    data:
+      rgb_color:
+      - 255
+      - 106
+      - 0
+      brightness_pct: 54
+    enabled: true
+  - action: automation.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - automation.wohnzimmer_frei
+      - automation.wohnzimmer_prasenz
+    data:
+      stop_actions: true
+    enabled: true
+  - action: light.turn_off
+    metadata: {}
+    target:
+      entity_id:
+      - light.kuche_warm_white
+      - light.wohnzimmer_warm_white
+    data: {}
+  - if:
+    - condition: state
+      entity_id: media_player.waipu_tv_stick
+      state:
+      - de.exaring.waipu
+      attribute: app_id
+    then:
+    - action: light.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - light.kuche_ambiente
+        - light.esp_wohnzimmer_led_stripe
+        - light.controller_rgb_4129af
+      data:
+        brightness_pct: 100
+        rgb_color:
+        - 255
+        - 128
+        - 0
+      enabled: true
+    - action: automation.turn_on
+      metadata: {}
+      target:
+        entity_id:
+        - automation.wohnzimmer_prasenz
+        - automation.wohnzimmer_frei
+      data: {}
+    - action: notify.waipu_notify
+      metadata: {}
+      data:
+        message: TV Modus Inaktiv
+    else:
+    - action: notify.waipu_notify
+      metadata: {}
+      data:
+        message: TV Modus Aktiv
+  mode: single
+- id: '1767824186945'
+  alias: iCloud Kalender Reminder
+  description: iCloud Kalender Reminder auf Alexa und iPhone
+  triggers:
+  - trigger: calendar
+    entity_id: calendar.arbeit
+    event: start
+    offset: '-24:0:0'
+  conditions: []
+  actions:
+  - action: notify.mobile_app_iphone_13
+    metadata: {}
+    data:
+      message: Du hast für Morgen einen Termin im Kalender
+      title: "\U0001F514\U0001F5D3️Kalender Erinnerung\U0001F5D3️\U0001F514"
+  - action: notify.alexa_media_r2d2
+    metadata: {}
+    data:
+      message: Du hast für Morgen einen Termin im Kalender
+  mode: single
+- id: '1767826737299'
+  alias: LLM Vision Hikvision
+  description: ''
+  use_blueprint:
+    path: valentinfrlch/event_summary.yaml
+    input:
+      motion_sensors:
+      - binary_sensor.sonoff_snzb_06p
+      - binary_sensor.wifi_human_presence_sensor_belegung
+      camera_entities:
+      - camera.walderdorffstrasse_26_eingang_eingang
+      - camera.walderdorffstrasse_26_wohnzimmer_wohnzimmer
+      provider: 01K7T45513SJ7ARRXJVBFEAZ82
+      model: gemini-2.5-flash
+      notify_device:
+      - 87ecc64f229de7cc5ae73e2f554e426a
+      notification_time: at {{ now().strftime("%H:%M") }}
+      tap_navigate: /lovelace/aio
+      notification_sticky: false
+      notification_sound: default
+      notification_critical: true
+      message: 'Fasse die Ereignisse auf Basis einer Serie von in kurzen Abständen
+        erfassten Aufnahmen zusammen. Konzentriere dich ausschließlich auf bewegliche
+        Elemente wie Personen, Fahrzeuge und andere aktive Vorgänge. Statische Objekte
+        und Umgebung bleiben unberücksichtigt. Liefere eine klare, prägnante Darstellung
+        von Bewegungen und Interaktionen. Erwähne weder explizit noch implizit die
+        Existenz von Aufnahmen – stelle die Informationen so dar, als würdest du die
+        Ereignisse direkt beobachten. Wenn keine Bewegung festgestellt wird, antworte
+        mit: „Keine Aktivität festgestellt.“'
+      run_conditions:
+      - condition: device
+        device_id: 87ecc64f229de7cc5ae73e2f554e426a
+        domain: device_tracker
+        entity_id: c1d86f5de53d6d2f31baff2d08199fab
+        type: is_not_home
+- id: '1767922407550'
+  alias: Neue Automation
+  description: ''
+  triggers:
+  - trigger: time
+    at: '23:30:00'
+  conditions: []
+  actions:
+  - action: climate.turn_off
+    metadata: {}
+    target:
+      entity_id: climate.heizung
+    data: {}
   mode: single

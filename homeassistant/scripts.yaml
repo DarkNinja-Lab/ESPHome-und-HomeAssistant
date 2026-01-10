@@ -5,38 +5,37 @@ alle_lichter_ausschalten:
     data: {}
     target:
       entity_id:
-      - light.badezimmer_ambiente
-      - light.badezimmer_1
+      - light.controller_rgb_4129af
       - light.balkon_lichterkette
-      - light.signify_netherlands_b_v_lwa001
+      - light.esp_badezimmer_spiegel_licht
       - light.tz3000_kohbva1f_ts0505b
-      - light.tz3000_kohbva1f_ts0505b_2
-      - light.kuche_ambiente
-      - light.kuche_warm_white
-      - light.lsc_smart_indoor_camera_indicator_light
-      - light.bedside_lamp_bett
-      - light.bedside_lamp_herz
-      - light.schlafzimmer_nachttisch_leuchte
-      - light.wohnzimmer_ambiente
+      - light.esp_flur_led_stripe
+      - light.esp_schlafzimmer_nachttisch
+      - light.esp_wohnzimmer_led_stripe
       - light.wohnzimmer_warm_white
-      - light.flur_ambiente
-      - light.flur_warm_white
+      - light.kuche_warm_white
+      - light.kuche_ambiente
+      - light.bedside_lamp_bett
+      - light.signify_netherlands_b_v_lwa001
+      - light.ender_3_licht
+      - light.ambiente
+      - light.esp_flur_deckenlampe
   alias: Alle Lichter Ausschalten
   description: ''
 alar:
   alias: Alarm Licht Rot Wohnung
   description: ''
   sequence:
-  - action: scene.create
+  - alias: erstellen szene.vor_alarm
+    action: scene.create
     metadata: {}
     data:
       snapshot_entities:
-      - light.flur_ambiente
-      - light.wohnzimmer_ambiente
       - light.kuche_ambiente
       - light.bedside_lamp_bett
+      - light.esp_flur_led_stripe
+      - light.esp_wohnzimmer_led_stripe
       scene_id: vor_alarm
-    alias: erstellen szene.vor_alarm
   - action: light.turn_on
     metadata: {}
     data:
@@ -58,156 +57,27 @@ alar:
     data: {}
     target:
       entity_id: scene.vor_alarm
-sleep:
-  sequence:
-  - if:
-    - condition: state
-      entity_id: binary_sensor.wohnzimmer_balkon
-      state: 'on'
-    - condition: state
-      entity_id: binary_sensor.flur_hausture
-      state: 'on'
-    then:
-    - action: notify.mobile_app_iphone_13
-      metadata: {}
-      data:
-        message: Balkon oder Eingang ist offen
-    - action: light.turn_on
-      metadata: {}
-      data:
-        effect: Alarm Blau
-        brightness_pct: 100
-      target:
-        entity_id: light.bedside_lamp_bett
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 1
-        milliseconds: 200
-    - action: light.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: light.bedside_lamp_bett
-    else:
-    - action: alarm_control_panel.alarm_arm_night
-      metadata: {}
-      data: {}
-      target:
-        entity_id: alarm_control_panel.alarmo
-    - action: script.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: script.alle_lichter_ausschalten
-    - action: switch.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: switch.ok
-    - action: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id:
-        - switch.firetv_do_not_disturb_switch
-        - switch.r2d2_do_not_disturb_switch
-    - action: light.turn_on
-      metadata: {}
-      data:
-        effect: Alarm Grün
-        brightness_pct: 100
-      target:
-        entity_id: light.bedside_lamp_bett
-    - delay:
-        hours: 0
-        minutes: 0
-        seconds: 1
-        milliseconds: 200
-    - action: light.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: light.bedside_lamp_bett
-  alias: Sleep
-  description: ''
-lichter_hell_weis:
-  sequence:
-  - action: light.turn_on
-    metadata: {}
-    data:
-      brightness_pct: 100
-    target:
-      entity_id:
-      - light.flur_warm_white
-      - light.kuche_warm_white
-      - light.wohnzimmer_warm_white
-      - light.signify_netherlands_b_v_lwa001
-  - action: light.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - light.badezimmer_ambiente
-      - light.flur_ambiente
-      - light.kuche_ambiente
-      - light.wohnzimmer_ambiente
-  alias: Lichter Hell Weiß
-  description: ''
-ambiente:
-  sequence:
-  - action: script.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: script.alle_lichter_ausschalten
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 0
-      milliseconds: 250
-  - action: light.turn_on
-    metadata: {}
-    data:
-      brightness_pct: 60
-      rgb_color:
-      - 255
-      - 128
-      - 0
-    target:
-      entity_id:
-      - light.flur_ambiente
-      - light.kuche_ambiente
-      - light.wohnzimmer_ambiente
-  - action: light.turn_on
-    metadata: {}
-    target:
-      entity_id: light.tz3000_kohbva1f_ts0505b
-    data:
-      color_temp_kelvin: 2605
-      brightness_pct: 2
-    alias: Badezimmer Lampe
-  alias: Ambiente
-  description: ''
-start_record:
+aufnahme_start:
   sequence:
   - action: agent_dvr.start_recording
     metadata: {}
-    data: {}
     target:
       entity_id:
-      - camera.walderdorffstrasse_26_eingang_eingang
       - camera.walderdorffstrasse_26_wohnzimmer_wohnzimmer
-  alias: Start Record
-  description: ''
-stop_record:
-  sequence:
+      - camera.walderdorffstrasse_26_eingang_eingang
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
   - action: agent_dvr.stop_recording
     metadata: {}
-    data: {}
     target:
       entity_id:
       - camera.walderdorffstrasse_26_eingang_eingang
       - camera.walderdorffstrasse_26_wohnzimmer_wohnzimmer
-  alias: Stop Record
-  description: ''
+    data: {}
+  alias: Aufnahme Start
+  description: Aufnahme Start Alarm
+  icon: mdi:record-rec
