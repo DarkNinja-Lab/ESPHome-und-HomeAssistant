@@ -1,6 +1,6 @@
 esphome:
-  name: flur
-  friendly_name: Flur Steuerung
+  name: esp-flur
+  friendly_name: ESP Flur
   comment: Flur Steuer & Sensor eingeit
   project: 
     name: "Dominic Hahn.flur"
@@ -47,22 +47,13 @@ binary_sensor:
     name: "Haustüre"
     device_class: door
 
-
   - platform: gpio
-    pin:
-      number: GPIO0
-      mode: INPUT_PULLUP
-      inverted: false
-    name: "Button"
-    device_class: presence
-
-  - platform: gpio
+    icon: "mdi:toggle-switch"
     pin:
       number: GPIO13
       mode: INPUT_PULLUP
       inverted: false
-    name: "Schalter"
-    device_class: safety
+    name: "Wand Schalter"
 #############################
 sensor:
   - platform: bme280_i2c
@@ -88,36 +79,6 @@ sensor:
     unit_of_measurement: "%"
     entity_category: "diagnostic"
     device_class: ""
-
-  - platform: template
-    name: "RGB Verbrauch"
-    id: led_power
-    unit_of_measurement: "W"
-    device_class: power
-    state_class: measurement
-    update_interval: 1s
-    lambda: |-
-      if (id(rgb_leds).current_values.is_on()) {
-        float brightness = id(rgb_leds).current_values.get_brightness();
-        return brightness * 12.0;
-      } else {
-        return 0.0;
-      }
-
-  - platform: template
-    name: "Weiß Verbrauch"
-    id: w_power
-    unit_of_measurement: "W"
-    device_class: power
-    state_class: measurement
-    lambda: |-
-      if (id(w_leds).current_values.is_on()) {
-        return 15.0;
-      } else {
-        return 0.0;
-      }
-
-
 #############################
 output:
   - platform: gpio
@@ -125,25 +86,19 @@ output:
     id: white
     inverted: false
 
-  - platform: gpio
-    pin: GPIO16
-    id: led_builtin
-    inverted: true
-
 light:
   - platform: binary
     output: white
-    id: w_leds
-    name: Warm White
-    icon: "mdi:led-strip-variant"
+    name: Deckenlampe
+    icon: "mdi:looks"
 
   - platform: neopixelbus
     type: RGB
     pin: GPIO15
-    icon: "mdi:television"
-    num_leds: 16
-    name: "Ambiente"
     id: rgb_leds
+    icon: "mdi:led-strip"
+    num_leds: 16
+    name: "LED Stripe"
     variant: WS2811
     effects:
       - random:
